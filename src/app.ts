@@ -5,6 +5,7 @@ import notFound from "./app/middlewares/notFound";
 
 import { envVars } from "./app/config/env";
 import router from "./app/routes";
+import { logger } from "./app/middlewares/logger";
 
 const app: Application = express();
 app.use(
@@ -18,6 +19,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(logger);
 app.use("/api/v1", router);
 
 app.get("/", (req: Request, res: Response) => {

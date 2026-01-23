@@ -28,10 +28,10 @@ const loadEnvironmentVariables = (): EnvVars => {
     "CLOUDINARY_CLOUD_NAME",
     "CLOUDINARY_API_KEY",
     "CLOUDINARY_API_SECRET",
-    "ACCESS_TOKEN_SECRET",
-    "REFRESH_TOKEN_SECRET",
-    "ACCESS_TOKEN_EXPIRES_IN",
-    "REFRESH_TOKEN_EXPIRES_IN",
+    "JWT_ACCESS_TOKEN_SECRET",
+    "JWT_REFRESH_TOKEN_SECRET",
+    "JWT_ACCESS_TOKEN_EXPIRES_IN",
+    "JWT_REFRESH_TOKEN_EXPIRES_IN",
   ];
 
   requiredVariables.forEach((key) => {
