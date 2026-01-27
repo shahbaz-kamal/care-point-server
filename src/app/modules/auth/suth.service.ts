@@ -1,8 +1,8 @@
 import { UserStatus } from "@prisma/client";
+import httpStatus from "http-status-codes";
+import AppError from "../../errorHelpers/AppError";
 import { prisma } from "../../shared/prisma";
 import { ILogin } from "./auth.interface";
-import AppError from "../../errorHelpers/AppError";
-import httpStatus from "http-status-codes";
 
 import bcrypt from "bcryptjs";
 
@@ -18,10 +18,10 @@ export const login = async (payload: ILogin) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Your account is marked as inactive, Please contact our admin");
 
   const isPasswordMatched = await bcrypt.compare(payload.password, user.password);
-  console.log(isPasswordMatched);
 
   if (!isPasswordMatched) throw new AppError(httpStatus.BAD_REQUEST, "Password dosent match");
-  return payload;
+
+  return { user };
 };
 
 export const AuthService = { login };

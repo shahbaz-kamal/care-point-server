@@ -6,10 +6,7 @@ import { Request } from "express";
 import { fileUploader } from "../../../utils/fileUploader";
 
 const createPatient = async (req: Request) => {
-  const hashedPassword = await bcrypt.hash(
-    req.body.password,
-    Number(envVars.BCRYPT_SALT_ROUND),
-  );
+  const hashedPassword = await bcrypt.hash(req.body.password, Number(envVars.BCRYPT_SALT_ROUND));
 
   if (req.file) {
     const uploadedResult = await fileUploader.uploadToCloudinary(req.file);
@@ -31,4 +28,25 @@ const createPatient = async (req: Request) => {
   return result;
 };
 
-export const UserService = { createPatient };
+const getAllUser = async (page: number, limit: number) => {
+  const skip = (page - 1) * limit;
+
+  console.log("From controller", page, limit, skip);
+  const result = await prisma.user.findMany({
+    skip,
+    take: limit,
+  });
+
+  const totalUser = await prisma.user.count();
+
+  const totalPage = totalUser / limit;
+  const meta = {
+    page,
+    limit,
+    totalPage,
+    totalDocuments: totalUser,
+  };
+  return {result,meta};
+};
+
+export const UserService = { createPatient, getAllUser };
