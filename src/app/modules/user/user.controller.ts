@@ -17,6 +17,9 @@ const createPatient = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const getAllUser = catchAsync(async (req: Request, res: Response) => {
+
+  // page, limit, sortBy, sortOrder ---> Pagination, Sorting
+  // fields, searchTerm ---> Searching and filtering
   const page = Number(req?.query?.page) || 1;
   const limit = Number(req?.query?.limit) || 10;
 
