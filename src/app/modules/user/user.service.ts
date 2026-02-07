@@ -28,16 +28,31 @@ const createPatient = async (req: Request) => {
   return result;
 };
 
-const getAllUser = async (page: number, limit: number) => {
+const getAllUser = async (page: number, limit: number, searchTerm?: string, sortBy?: string | null, sortOrder?: string | null) => {
   const skip = (page - 1) * limit;
 
-  console.log("From controller", page, limit, skip);
+  console.log("From controller", page, limit, skip, sortBy, sortOrder);
   const result = await prisma.user.findMany({
     skip,
     take: limit,
+
+    where: {
+      email: {
+        contains: searchTerm,
+        mode: "insensitive",
+      },
+    },
+    orderBy:
+      sortBy && sortOrder
+        ? { [sortBy]: sortOrder }
+        : {
+            createdAt: "desc",
+          },
   });
 
   const totalUser = await prisma.user.count();
+
+  const matchedDocument = result.length;
 
   const totalPage = totalUser / limit;
   const meta = {
@@ -45,8 +60,9 @@ const getAllUser = async (page: number, limit: number) => {
     limit,
     totalPage,
     totalDocuments: totalUser,
+    matchedDocument,
   };
-  return {result,meta};
+  return { result, meta };
 };
 
 export const UserService = { createPatient, getAllUser };

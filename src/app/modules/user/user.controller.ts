@@ -20,8 +20,12 @@ const getAllUser = catchAsync(async (req: Request, res: Response) => {
   const page = Number(req?.query?.page) || 1;
   const limit = Number(req?.query?.limit) || 10;
 
+  const searchTerm = req?.query?.searchTerm || "";
+  const sortBy = req?.query?.sortBy || null;
+  const sortOrder = req?.query?.sortOrder || null;
+
   console.log("From controller", page, limit);
-  const { result, meta } = await UserService.getAllUser(page, limit);
+  const { result, meta } = await UserService.getAllUser(page, limit,searchTerm as string,sortBy as string | null, sortOrder as string | null);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

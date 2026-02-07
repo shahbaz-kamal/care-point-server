@@ -7,6 +7,7 @@ import { ILogin } from "./auth.interface";
 import bcrypt from "bcryptjs";
 
 export const login = async (payload: ILogin) => {
+  console.log(payload)
   const user = await prisma.user.findUniqueOrThrow({
     where: {
       email: payload.email,
