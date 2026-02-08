@@ -23,17 +23,20 @@ const getAllUser = catchAsync(async (req: Request, res: Response) => {
   // page, limit, sortBy, sortOrder ---> Pagination, Sorting
   // fields, searchTerm ---> Searching and filtering
   
-  const page = Number(req?.query?.page) || 1;
-  const limit = Number(req?.query?.limit) || 10;
+const filters=pick(req.query,["status","role","email","searchTerm"])
+const options=pick(req.query,["page","limit","sortBy","sortOrder"])
 
-  const searchTerm = req?.query?.searchTerm || "";
-  const sortBy = req?.query?.sortBy || null;
-  const sortOrder = req?.query?.sortOrder || null;
+  // const page = Number(req?.query?.page) || 1;
+  // const limit = Number(req?.query?.limit) || 10;
 
-  console.log("From controller", page, limit);
+  // const searchTerm = req?.query?.searchTerm || "";
+  // const sortBy = req?.query?.sortBy || null;
+  // const sortOrder = req?.query?.sortOrder || null;
 
-  const resuss=pick(req?.query,["page","limit"])
-  const { result, meta } = await UserService.getAllUser(page, limit,searchTerm as string,sortBy as string | null, sortOrder as string | null);
+  // console.log("From controller", page, limit);
+
+ 
+  const { result, meta } = await UserService.getAllUser(filters,options);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
