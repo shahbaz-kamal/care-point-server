@@ -2,7 +2,7 @@ import cors from "cors";
 import express, { Application, Request, Response } from "express";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
-
+import cookieParser from "cookie-parser"
 import { envVars } from "./app/config/env";
 import router from "./app/routes";
 import { logger } from "./app/middlewares/logger";
@@ -18,6 +18,7 @@ app.use(
 //parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
 
 app.use(logger);
 app.use("/api/v1", router);

@@ -59,25 +59,32 @@ const getAllUser = async (params: any, options: IPaginationOptions) => {
       })),
     });
   }
+
+  const whereCondition: Prisma.UserWhereInput =
+    andCondition.length > 0
+      ? {
+          AND: andCondition,
+        }
+      : {};
+
   const result = await prisma.user.findMany({
     skip,
     take: limit,
 
-    where: { AND: andCondition },
+    where: whereCondition,
     orderBy: { [sortBy]: sortOrder },
   });
 
-  const totalUser = await prisma.user.count();
+  const totalUser = await prisma.user.count({
+    where: whereCondition,
+  });
 
-  const matchedDocument = result.length;
-
-  const totalPage = totalUser / limit;
+  const totalPage = Math.ceil(totalUser / limit);
   const meta = {
     page,
     limit,
     totalPage,
     totalDocuments: totalUser,
-    matchedDocument,
   };
   return { result, meta };
 };
