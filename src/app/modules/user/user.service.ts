@@ -9,28 +9,7 @@ import { IPaginationOptions } from "../../types";
 import { Prisma } from "@prisma/client";
 import { userSearchableFields } from "./user.constant";
 
-const createPatient = async (req: Request) => {
-  const hashedPassword = await bcrypt.hash(req.body.password, Number(envVars.BCRYPT_SALT_ROUND));
 
-  if (req.file) {
-    const uploadedResult = await fileUploader.uploadToCloudinary(req.file);
-    req.body.patient.profilePhoto = uploadedResult?.secure_url;
-  }
-  const result = await prisma.$transaction(async (tx) => {
-    await tx.user.create({
-      data: {
-        email: req.body.patient.email,
-        password: hashedPassword,
-      },
-    });
-
-    return await tx.patient.create({
-      data: req.body.patient,
-    });
-  });
-
-  return result;
-};
 
 const getAllUser = async (params: any, options: IPaginationOptions) => {
   const { page, limit, skip, sortBy, sortOrder } = PaginationHelper.calcualtePagination(options);
@@ -89,4 +68,33 @@ const getAllUser = async (params: any, options: IPaginationOptions) => {
   return { result, meta };
 };
 
-export const UserService = { createPatient, getAllUser };
+const createPatient = async (req: Request) => {
+  const hashedPassword = await bcrypt.hash(req.body.password, Number(envVars.BCRYPT_SALT_ROUND));
+
+  if (req.file) {
+    const uploadedResult = await fileUploader.uploadToCloudinary(req.file);
+    req.body.patient.profilePhoto = uploadedResult?.secure_url;
+  }
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.user.create({
+      data: {
+        email: req.body.patient.email,
+        password: hashedPassword,
+      },
+    });
+
+    return await tx.patient.create({
+      data: req.body.patient,
+    });
+  });
+
+  return result;
+};
+
+const createDoctor=async()=>{
+
+}
+
+
+
+export const UserService = { createPatient, getAllUser,createDoctor };
