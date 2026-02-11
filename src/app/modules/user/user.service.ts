@@ -92,6 +92,6 @@ const createPatient = async (req: Request) => {
 };
 
 const createDoctor=async(payload)=>{
-
+console.log(payload)
 }
 export const UserService = { createPatient, getAllUser,createDoctor };
