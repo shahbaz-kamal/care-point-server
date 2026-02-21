@@ -23,6 +23,13 @@ router.post(
   validateRequest(UserValidation.createAdminZodSchema),
   UserController.createAdmin
 );
+router.post(
+  "/create-doctor",
+  auth(UserRole.ADMIN),
+  fileUploader.upload.single("file"),
+  validateRequest(UserValidation.createDoctorZodSchema),
+  UserController.createDoctor
+);
 
 // (req: Request, res: Response, next: NextFunction) => {
 //   req.body = UserValidation.createUserZodSchema.parse(JSON.parse(req.body.data));
