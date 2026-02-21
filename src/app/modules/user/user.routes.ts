@@ -20,7 +20,8 @@ router.post(
   "/create-admin",
   auth(UserRole.ADMIN),
   fileUploader.upload.single("file"),
-  validateRequest(UserValidation.createAdminZodSchema)
+  validateRequest(UserValidation.createAdminZodSchema),
+  UserController.createAdmin
 );
 
 // (req: Request, res: Response, next: NextFunction) => {
