@@ -6,30 +6,6 @@ import httpStatus from "http-status-codes";
 import { pick } from "../../../utils/pick";
 import { userFilterableFields } from "./user.constant";
 
-const createPatient = catchAsync(async (req: Request, res: Response) => {
-  const newUser = req.body;
-  console.log(newUser);
-  const result = await UserService.createPatient(req);
-
-  sendResponse(res, {
-    statusCode: httpStatus.CREATED,
-    success: true,
-    message: "User Creation Successfull",
-    data: result,
-  });
-});
-const createDoctor = catchAsync(async (req: Request, res: Response) => {
-  const newUser = req.body;
-  console.log(newUser);
-  const result = await UserService.createPatient(req);
-
-  sendResponse(res, {
-    statusCode: httpStatus.CREATED,
-    success: true,
-    message: "User Creation Successfull",
-    data: result,
-  });
-});
 const getAllUser = catchAsync(async (req: Request, res: Response) => {
   // page, limit, sortBy, sortOrder ---> Pagination, Sorting
   // fields, searchTerm ---> Searching and filtering
@@ -57,4 +33,39 @@ const getAllUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const UserController = { createPatient, getAllUser,createDoctor };
+const createPatient = catchAsync(async (req: Request, res: Response) => {
+  const newUser = req.body;
+  console.log(newUser);
+  const result = await UserService.createPatient(req);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "User Creation Successfull",
+    data: result,
+  });
+});
+const createAdmin = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.createAdmin(req);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Admin Creation Successfull",
+    data: result,
+  });
+});
+const createDoctor = catchAsync(async (req: Request, res: Response) => {
+  const newUser = req.body;
+  console.log(newUser);
+  const result = await UserService.createPatient(req);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "User Creation Successfull",
+    data: result,
+  });
+});
+
+export const UserController = { createPatient, getAllUser, createDoctor, createAdmin };

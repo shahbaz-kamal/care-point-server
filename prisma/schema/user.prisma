@@ -10,7 +10,6 @@ model User {
   admin               Admin?
   doctor              Doctor?
   patient             Patient?
-
   @@map("users")
 }
 

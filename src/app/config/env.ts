@@ -11,6 +11,10 @@ interface EnvVars {
     API_KEY: string;
     API_SECRET: string;
   };
+  SUPER_ADMIN: {
+    EMAIL: string;
+    PASSWORD: string;
+  };
   JWT: {
     ACCESS_TOKEN_SECRET: string;
     REFRESH_TOKEN_SECRET: string;
@@ -32,6 +36,8 @@ const loadEnvironmentVariables = (): EnvVars => {
     "JWT_REFRESH_TOKEN_SECRET",
     "JWT_ACCESS_TOKEN_EXPIRES_IN",
     "JWT_REFRESH_TOKEN_EXPIRES_IN",
+    "SUPER_ADMIN_EMAIL",
+    "SUPER_ADMIN_PASSWORD",
   ];
 
   requiredVariables.forEach((key) => {
@@ -46,6 +52,10 @@ const loadEnvironmentVariables = (): EnvVars => {
       CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
       API_KEY: process.env.CLOUDINARY_API_KEY as string,
       API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
+    },
+    SUPER_ADMIN: {
+      EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
+      PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
     },
     JWT: {
       ACCESS_TOKEN_SECRET: process.env.JWT_ACCESS_TOKEN_SECRET as string,

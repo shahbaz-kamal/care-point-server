@@ -6,10 +6,8 @@ import { Request } from "express";
 import { fileUploader } from "../../../utils/fileUploader";
 import { PaginationHelper } from "../../../utils/paginationHelper";
 import { IPaginationOptions } from "../../types";
-import { Prisma } from "@prisma/client";
+import { Prisma, UserRole } from "@prisma/client";
 import { userSearchableFields } from "./user.constant";
-
-
 
 const getAllUser = async (params: any, options: IPaginationOptions) => {
   const { page, limit, skip, sortBy, sortOrder } = PaginationHelper.calcualtePagination(options);
@@ -91,7 +89,35 @@ const createPatient = async (req: Request) => {
   return result;
 };
 
-const createDoctor=async(payload)=>{
-// console.log(payload)
-}
-export const UserService = { createPatient, getAllUser,createDoctor };
+const createAdmin = async (req: Request) => {
+  const file = req?.file;
+  const hashedPassword: string = await bcrypt.hash(req.body.password, Number(envVars.BCRYPT_SALT_ROUND));
+  if (file) {
+    const uploadedResult = await fileUploader.uploadToCloudinary(file);
+    req.body.admin.profilePhoto = uploadedResult?.secure_url;
+  }
+
+  const userData = {
+    email: req.body.admin.email,
+    password: hashedPassword,
+    role: UserRole.ADMIN,
+  };
+
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.user.create({
+      data: userData,
+    });
+
+    const createdAdmin = await tx.admin.create({
+      data: req.body.admin,
+    });
+    return createdAdmin;
+  });
+
+  return result;
+};
+
+const createDoctor = async (payload) => {
+  // console.log(payload)
+};
+export const UserService = { createPatient, getAllUser, createDoctor, createAdmin };
