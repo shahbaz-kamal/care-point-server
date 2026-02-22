@@ -1,5 +1,5 @@
 const insertIntoDB=async(payload:any)=>{
-    console.log(payload)
+    // console.log(payload)
     return payload
 }
 
