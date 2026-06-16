@@ -5,6 +5,16 @@ import sendResponse from "../../shared/sendResponse";
 
 import { ScheduleServices } from "./schedule.service";
 
+const scheduleForDoctors = catchAsync(async (req: Request, res: Response) => {
+  const result = await ScheduleServices.scheduleForDoctors();
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Schedule Creation Successfull",
+    data: [],
+  });
+});
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const result = await ScheduleServices.insertIntoDB(req.body);
 
@@ -16,4 +26,4 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const ScheduleController = { insertIntoDB };
+export const ScheduleController = { insertIntoDB,scheduleForDoctors };
