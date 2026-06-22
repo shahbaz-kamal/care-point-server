@@ -6,7 +6,7 @@ import httpStatus from "http-status-codes";
 import { setAuthCookie } from "../../../utils/setAuthCookie";
 import { createUserToken } from "../../../utils/userToken";
 
-export const login = catchAsync(async (req: Request, res: Response) => {
+ const login = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthService.login(req.body);
 
   const userTokens = await createUserToken(result.user);

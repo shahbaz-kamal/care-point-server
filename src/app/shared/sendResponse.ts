@@ -7,10 +7,10 @@ const sendResponse = <T>(
     success: boolean;
     message: string;
     meta?: {
-      page: number;
-      limit: number;
-      totalPage: number;
-      totalDocuments: number;
+      page?: number;
+      limit?: number;
+      totalPage?: number;
+      totalDocuments?: number;
     };
     data: T | null | undefined;
   }
