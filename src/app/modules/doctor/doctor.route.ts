@@ -5,5 +5,6 @@ const router = Router();
 
 router.get("/", DoctorController.getAllFromDb);
 router.patch("/:id", DoctorController.updateInDB);
+router.post("/suggestion", DoctorController.getAiSuggestion);
 
 export const DoctorRoutes = router;

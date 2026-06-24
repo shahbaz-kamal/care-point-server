@@ -1,9 +1,11 @@
-import { Doctor, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { PaginationHelper } from "../../../utils/paginationHelper";
+import { prisma } from "../../shared/prisma";
 import { IPaginationOptions } from "../../types";
 import { doctorSearchableFields } from "./doctor.constants";
-import { prisma } from "../../shared/prisma";
 import { IDoctorUpdateInput } from "./doctor.interface";
+import { openai } from "../../config/openRouter";
+import { extractJsonFromMessage } from "../../../utils/extractJsonFromMessage";
 
 const getAllFromDb = async (filters: any, options: IPaginationOptions) => {
   const { page, limit, skip, sortBy, sortOrder } =
@@ -115,4 +117,52 @@ const updateInDB = async (id: string, payload: Partial<IDoctorUpdateInput>) => {
   });
 };
 
-export const DoctorService = { getAllFromDb, updateInDB };
+const getAiSuggestion = async (payload: { symptoms: string }) => {
+  
+
+  const doctors = await prisma.doctor.findMany({
+    where: { isDeleted: false },
+    include: {
+      doctorSpecialties: {
+        include: {
+          specialities: true,
+        },
+      },
+    },
+  });
+
+  console.log("doctors data loaded.......\n");
+  const prompt = `
+You are a medical assistant AI. Based on the patient's symptoms, suggest the top 3 most suitable doctors.
+Each doctor has specialties and years of experience.
+Only suggest doctors who are relevant to the given symptoms.
+
+Symptoms: ${payload.symptoms}
+
+Here is the doctor list (in JSON):
+${JSON.stringify(doctors, null, 2)}
+
+Return your response in JSON format with full individual doctor data. 
+`;
+
+  console.log("analyzing......\n");
+  const completion = await openai.chat.completions.create({
+    model: "google/gemma-4-31b-it:free",
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are a helpful AI medical assistant that provides doctor suggestions.",
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+  });
+
+  const result = await extractJsonFromMessage(completion.choices[0].message);
+  return result;
+};
+
+export const DoctorService = { getAllFromDb, updateInDB, getAiSuggestion };
