@@ -4,8 +4,8 @@ model Appoinment {
     doctorId       String
     scheduleId     String
     videoCallingId String
-    status         AppoinmentStatus
-    paymentStatus  String
+    status         AppoinmentStatus @default(SCHEDULED)
+    paymentStatus  PaymentStatus    @default(UNPAID)
     createdAt      DateTime         @default(now())
     updatedAt      DateTime         @updatedAt
 
@@ -13,7 +13,7 @@ model Appoinment {
     doctor   Doctor   @relation(fields: [doctorId], references: [id])
     schedule Schedule @relation(fields: [scheduleId], references: [id])
 
-    payment Payment?
+    payment      Payment?
     prescription Prescription?
 
     @@map("appoinments")
@@ -38,7 +38,7 @@ model Payment {
 model Prescription {
     id String @id @default(uuid())
 
-    appoinmentId String @unique
+    appoinmentId String   @unique
     doctorId     String
     patientId    String
     instructions String

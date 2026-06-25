@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Doctor, Prisma, UserStatus } from "@prisma/client";
 import { PaginationHelper } from "../../../utils/paginationHelper";
 import { prisma } from "../../shared/prisma";
 import { IPaginationOptions } from "../../types";
@@ -118,8 +118,6 @@ const updateInDB = async (id: string, payload: Partial<IDoctorUpdateInput>) => {
 };
 
 const getAiSuggestion = async (payload: { symptoms: string }) => {
-  
-
   const doctors = await prisma.doctor.findMany({
     where: { isDeleted: false },
     include: {
@@ -165,4 +163,73 @@ Return your response in JSON format with full individual doctor data.
   return result;
 };
 
-export const DoctorService = { getAllFromDb, updateInDB, getAiSuggestion };
+const getByIdFromDB = async (id: string): Promise<Doctor | null> => {
+  const result = await prisma.doctor.findUnique({
+    where: {
+      id,
+      isDeleted: false,
+    },
+    include: {
+      doctorSpecialties: {
+        include: {
+          specialities: true,
+        },
+      },
+      doctorSchedules: {
+        include: {
+          schedule: true,
+        },
+      },
+    },
+  });
+  return result;
+};
+
+const deleteFromDB = async (id: string): Promise<Doctor> => {
+  return await prisma.$transaction(async (transactionClient) => {
+    const deleteDoctor = await transactionClient.doctor.delete({
+      where: {
+        id,
+      },
+    });
+
+    await transactionClient.user.delete({
+      where: {
+        email: deleteDoctor.email,
+      },
+    });
+
+    return deleteDoctor;
+  });
+};
+
+const softDelete = async (id: string): Promise<Doctor> => {
+  return await prisma.$transaction(async (transactionClient) => {
+    const deleteDoctor = await transactionClient.doctor.update({
+      where: { id },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    await transactionClient.user.update({
+      where: {
+        email: deleteDoctor.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+
+    return deleteDoctor;
+  });
+};
+
+export const DoctorService = {
+  getAllFromDb,
+  updateInDB,
+  getAiSuggestion,
+  getByIdFromDB,
+  deleteFromDB,
+  softDelete,
+};
